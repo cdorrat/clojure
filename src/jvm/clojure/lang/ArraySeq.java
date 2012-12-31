@@ -54,7 +54,7 @@ static ISeq createFromObject(Object array){
 
 ArraySeq(Object array, int i){
 	this.array = array;
-	this.ct = array.getClass().getComponentType();
+	this.ct = Object.class; //array.getClass().getComponentType();
 	this.i = i;
 	this.oa = (Object[]) (array instanceof Object[] ? array : null);
 //    this._rest = this;
@@ -63,7 +63,7 @@ ArraySeq(Object array, int i){
 ArraySeq(IPersistentMap meta, Object array, int i){
 	super(meta);
 	this.array = array;
-	this.ct = array.getClass().getComponentType();
+	this.ct = Object.class; //array.getClass().getComponentType();
 	this.i = i;
 	this.oa = (Object[]) (array instanceof Object[] ? array : null);
 }

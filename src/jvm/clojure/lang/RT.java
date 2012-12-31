@@ -467,6 +467,9 @@ public static void loadLibrary(String libname){
 
 
 ////////////// Collections support /////////////////////////////////
+static public boolean isArray(Class c) {
+	return c.getName().charAt(0) == '[';
+}
 
 static public ISeq seq(Object coll){
 	if(coll instanceof ASeq)
@@ -484,7 +487,7 @@ static ISeq seqFrom(Object coll){
 		return null;
 	else if(coll instanceof Iterable)
 		return IteratorSeq.create(((Iterable) coll).iterator());
-	else if(coll.getClass().isArray())
+	else if(isArray(coll.getClass()))
 		return ArraySeq.createFromObject(coll);
 	else if(coll instanceof CharSequence)
 		return StringSeq.create((CharSequence) coll);
@@ -541,7 +544,7 @@ static int countFrom(Object o){
 		return ((Collection) o).size();
 	else if(o instanceof Map)
 		return ((Map) o).size();
-	else if(o.getClass().isArray())
+	else if(isArray(o.getClass()))
 		return Array.getLength(o);
 
 	throw new UnsupportedOperationException("count not supported on this type: " + o.getClass().getSimpleName());
@@ -648,7 +651,7 @@ static Object getFrom(Object coll, Object key){
 		IPersistentSet set = (IPersistentSet) coll;
 		return set.get(key);
 	}
-	else if(key instanceof Number && (coll instanceof String || coll.getClass().isArray())) {
+	else if(key instanceof Number && (coll instanceof String || isArray(coll.getClass()))) {
 		int n = ((Number) key).intValue();
 		if(n >= 0 && n < count(coll))
 			return nth(coll, n);
@@ -679,7 +682,7 @@ static Object getFrom(Object coll, Object key, Object notFound){
 			return set.get(key);
 		return notFound;
 	}
-	else if(key instanceof Number && (coll instanceof String || coll.getClass().isArray())) {
+	else if(key instanceof Number && (coll instanceof String || isArray(coll.getClass()))) {
 		int n = ((Number) key).intValue();
 		return n >= 0 && n < count(coll) ? nth(coll, n) : notFound;
 	}
@@ -708,7 +711,7 @@ static public Object contains(Object coll, Object key){
 		Set s = (Set) coll;
 		return s.contains(key) ? T : F;
 	}
-	else if(key instanceof Number && (coll instanceof String || coll.getClass().isArray())) {
+	else if(key instanceof Number && (coll instanceof String || isArray(coll.getClass()))) {
 		int n = ((Number) key).intValue();
 		return n >= 0 && n < count(coll);
 	}
@@ -760,7 +763,7 @@ static Object nthFrom(Object coll, int n){
 		return null;
 	else if(coll instanceof CharSequence)
 		return Character.valueOf(((CharSequence) coll).charAt(n));
-	else if(coll.getClass().isArray())
+	else if(isArray(coll.getClass()))
 		return Reflector.prepRet(coll.getClass().getComponentType(),Array.get(coll, n));
 	else if(coll instanceof RandomAccess)
 		return ((List) coll).get(n);
@@ -810,7 +813,7 @@ static Object nthFrom(Object coll, int n, Object notFound){
 			return Character.valueOf(s.charAt(n));
 		return notFound;
 	}
-	else if(coll.getClass().isArray()) {
+	else if(isArray(coll.getClass())) {
 		if(n < Array.getLength(coll))
 			return Reflector.prepRet(coll.getClass().getComponentType(),Array.get(coll, n));
 		return notFound;
@@ -1563,7 +1566,7 @@ static public Object[] toArray(Object coll) {
 			ret[i] = chars[i];
 		return ret;
 	}
-	else if(coll.getClass().isArray()) {
+	else if(isArray(coll.getClass())) {
 		ISeq s = (seq(coll));
 		Object[] ret = new Object[count(s)];
 		for(int i = 0; i < ret.length; i++, s = s.next())
